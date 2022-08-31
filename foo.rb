@@ -10,3 +10,18 @@ end
 def bar(opts={})
   "Hello #{opts[:name]}"
 end
+
+class Foo
+
+  # lets you access the attribute
+  # also comes with a setter (to update attributes)
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def hello
+    "Hello #{@name}"
+  end
+end
