@@ -1,8 +1,5 @@
 require 'aws-record'
 
-# .find is a class method associated with Aws::Record
-
-# Forum class
 class Forum
   include Aws::Record
   string_attr :Name, hash_key: true
@@ -18,7 +15,6 @@ class Forum
   # call the query class method from Thread Record
   # pass in :Name
   # after getting the information, print to see what the data looks like
-  # what data should this method
   def get_all_threads
     query = ThreadRecord.query(
       # what specific data needs to match
@@ -41,13 +37,10 @@ class Forum
       puts "_____________"
     end
   end
-
 end
 
 
-
 # Thread class
-#
 class ThreadRecord
   include Aws::Record
   set_table_name "Thread"
@@ -65,17 +58,6 @@ class ThreadRecord
 
 end
 
-# .find to see if the class exists
-# .to_h to look inside of an object.
-# method that ends with ? means return true or false
-# method that ends with ! means dangerous, mutate original data
-
-# save! checks to see if the object has all info to perform save
-# if object method has raise errors, the method might be marked with !
-
-# dirty method on class will show what attributes has been changed on local machine
-
-# Debug class
 class Debug
   include Aws::Record
   string_attr :id, hash_key: true
