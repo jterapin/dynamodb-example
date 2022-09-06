@@ -14,6 +14,33 @@ class Forum
     super opts
   end
 
+  # define a method called get_all_threads
+  # call the query class method from Thread Record
+  # pass in :Name
+  # after getting the information, print to see what the data looks like
+  # what data should this method
+  def get_all_threads
+    query = ThreadRecord.query(
+      # what specific data needs to match
+      expression_attribute_values: {
+        ':n' => self.Name
+      },
+      # what attribute i need from ThreadRecord to reference
+      expression_attribute_names: {
+        '#N' => 'ForumName'
+      },
+      # what info needs to match
+      key_condition_expression: '#N = :n',
+      )
+
+    thread_num = 0
+    query.each do |thread|
+      thread_num += 1
+      puts "#{thread_num}"
+      puts "Subject: #{thread.rk} \nUpdated:#{thread.Updated}"
+      puts "_____________"
+    end
+  end
 
 end
 
@@ -39,7 +66,7 @@ class ThreadRecord
 end
 
 # .find to see if the class exists
-# .to_h to look inside of an objectt.
+# .to_h to look inside of an object.
 # method that ends with ? means return true or false
 # method that ends with ! means dangerous, mutate original data
 
