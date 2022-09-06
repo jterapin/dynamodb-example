@@ -1,15 +1,23 @@
 require 'aws-record'
 
+# .find is a class method associated with Aws::Record
+
 # Forum class
 class Forum
   include Aws::Record
   string_attr :Name, hash_key: true
   string_attr :Owner
-  integer_attr :Updated
+  epoch_time_attr :Updated
+
+  def save(opts = {})
+    self.Updated = Time.now
+    super opts
+  end
+
+
 end
 
-# .find is a class method associated with Aws::Record
-#  need to pass in primary key
+
 
 # Thread class
 #
