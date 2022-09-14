@@ -5,14 +5,19 @@ module DataAttr
     # we use a trick here to allow us to define new class methods
     # see: https://www.culttt.com/2015/07/08/working-with-mixins-in-ruby
     klass.send(:extend, DataAttrClassMethods)
-    # different syntax from what i seen before
-    # instead of the above, they used
-    # klass.extend(DataAttrClassMethods)
+    # different syntax from what i seen before (`klass.extend(DataAttrClassMethods)`)
     # using .send method forces our variables to be public instead of private
+
+  end
+
+  def initialize
+    @data = {}
   end
 
   # TODO: Define a "data" method that returns @data
-
+  def data
+    @data
+  end
 
 
   module DataAttrClassMethods
@@ -21,6 +26,11 @@ module DataAttr
 
     # TODO: define the data_attr method, which should take a single symbol as input
     # and should use `define_method`, see: https://medium.com/@camfeg/dynamic-method-definition-with-rubys-define-method-b3ffbbee8197
+    define_method('data_attr') do |my_item|
+      "This is #{my_item}" # add a method to a class
+    end
+    # define method allows you to create other methods! which is why it is used
+    # my_item does two things - return data and set data
 
   end
 end
@@ -28,15 +38,23 @@ end
 class MyClass
   include DataAttr
 
-  data_attr :my_item #data_attr is a class method that our DataAttr will define.  It will add the my_item method to our class!
+  data_attr :my_item #data_attr is a class method that our DataAttr will define.
+  # It will add the my_item method to our class!
+
 end
 
-
-
 class Foo
+  # code that wants to read or write those instances of variables
+  # must use helper methods such as
+  # attr_reader, attr_writer or attr_accessor
+  attr_accessor :title
 
-  def initialize
+  # when creating an instance of Foo, this ensures we are
+  # creates an empty hash called data
+  # the @ indicates instance variable - which is specific to the class
+  def initialize(title)
     @data = {}
+    @title = title
   end
 
   def data
@@ -49,14 +67,9 @@ class Foo
     # single symbols
   end
 
-  # style convention for set methods
+  # setter for my_item
   def my_item=(value)
     @data[:my_item] = value
   end
 
 end
-
-
-
-
-
