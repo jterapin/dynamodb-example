@@ -7,7 +7,6 @@ module DataAttr
     klass.send(:extend, DataAttrClassMethods)
     # different syntax from what i seen before (`klass.extend(DataAttrClassMethods)`)
     # using .send method forces our variables to be public instead of private
-
   end
 
   def initialize
@@ -19,18 +18,23 @@ module DataAttr
     @data
   end
 
-
   module DataAttrClassMethods
     # any  methods we define here will end up being class methods on any
     # classes that includes DataAttr (thanks to the extend above!)
 
     # TODO: define the data_attr method, which should take a single symbol as input
     # and should use `define_method`, see: https://medium.com/@camfeg/dynamic-method-definition-with-rubys-define-method-b3ffbbee8197
-    define_method('data_attr') do |my_item|
-      "This is #{my_item}" # add a method to a class
-    end
     # define method allows you to create other methods! which is why it is used
     # my_item does two things - return data and set data
+    def data_attr(my_item)
+      define_method "#{my_item}" do
+        @data[:my_item]
+      end
+      define_method ("#{my_item}=") do |value|
+        @data[:my_item] = value
+      end
+    end
+
 
   end
 end
