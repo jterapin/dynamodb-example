@@ -35,15 +35,15 @@ module DataAttr
       end
     end
 
-
   end
 end
-
 class MyClass
   include DataAttr
 
   data_attr :my_item #data_attr is a class method that our DataAttr will define.
   # It will add the my_item method to our class!
+
+
 
 end
 
