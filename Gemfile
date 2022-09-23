@@ -1,3 +1,5 @@
 source 'https://rubygems.org'
 gem 'aws-sdk-dynamodb'
 gem 'rspec'
+gem 'ox'
+gem 'aws-record', path: '/Users/terajul/Projects/aws-sdk-ruby-record'

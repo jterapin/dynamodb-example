@@ -64,8 +64,8 @@ add_item = client.put_item(
 resp = client.get_item(
   table_name: 'Thread',
   key: {
-    'ForumName' => 'Forum Test',
-    'Subject' => 'Subject Test'
+    'ForumName' => 'Forum1',
+    'Subject' => 'Subject2'
   }
 )
 
@@ -177,3 +177,64 @@ resp = client.batch_write_item(
     ]
   }
 )
+
+# update_item to do an atomic increment
+# example table to test - Thread with an attribute named 'Foo'
+resp = client.update_item({
+  table_name: 'Thread',
+  key: {
+    'ForumName' => 'Forum2',
+    'Subject' => 'Subject2'
+  },
+  expression_attribute_values: {
+    ':i' => 1,
+  },
+  update_expression: 'SET Foo = Foo + :i',
+  return_values: 'UPDATED_NEW',
+})
+
+# I'd challenge you to update the increment_foo function to take
+# a few arguments: the keys (ForumName and Subject),
+# the name of the column to increment (ie, generalize Foo)
+# and the amount to increment by (can default to 1).
+
+# function specific to 'Thread'
+
+
+# thinking of doing the following arg names
+# partition_key and partition_key_value
+# sort_key and sort_key_value
+# table_name
+
+# conditional statement to handle tables with secondary keys
+# if sort_key exists - do this.
+# maybe a helper function that handles generating the hash for key?
+
+def increment_foo(client:, table_name:, item_keys:, expression_attribute_value:, increment: 1)
+  client.update_item({
+    table_name: table_name,
+    key: item_keys,
+    expression_attribute_values: {
+      ':i' => increment,
+    },
+  expression_attribute_names: {
+    '#e' => expression_attribute_value,
+    },
+    update_expression: "SET #e = #e + :i",
+    return_values: 'UPDATED_NEW',
+    })
+end
+
+# code to test when there's partition and sort keys
+input_keys = {
+  'ForumName' => 'Forum1',
+  'Subject' => 'Subject1'
+}
+increment_foo(client: client, table_name: 'Thread',item_keys: input_keys, expression_attribute_value: 'Foo', increment: 2)
+
+# code to test when there's only one primary key
+input_key = {
+  'Name' => 'Name1',
+}
+increment_foo(client: client, table_name: 'Forum',item_keys: input_key, expression_attribute_value: 'Foo')
+
