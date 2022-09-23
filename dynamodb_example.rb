@@ -193,18 +193,25 @@ resp = client.update_item({
   return_values: 'UPDATED_NEW',
 })
 
+# I'd challenge you to update the increment_foo function to take
+# a few arguments: the keys (ForumName and Subject),
+# the name of the column to increment (ie, generalize Foo)
+# and the amount to increment by (can default to 1).
 
-def increment_foo(client)
+# function specific to 'Thread'
+def increment_foo(client:, forum_name:, subject_name:, attribute_name:, increment: 1)
   client.update_item({
     table_name: 'Thread',
     key: {
-     'ForumName' => 'Forum2',
-     'Subject' => 'Subject2'
+     'ForumName' => forum_name,
+     'Subject' => subject_name
     },
     expression_attribute_values: {
-     ':i' => 1,
+     ':i' => increment,
     },
-    update_expression: 'SET Foo = Foo + :i',
+    update_expression: "SET #{attribute_name} = #{attribute_name} + :i",
     return_values: 'UPDATED_NEW',
     })
 end
+
+increment_foo(client: client, forum_name: 'Forum1', subject_name: 'Subject1', attribute_name: 'Foo', increment: 2)
