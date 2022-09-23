@@ -64,8 +64,8 @@ add_item = client.put_item(
 resp = client.get_item(
   table_name: 'Thread',
   key: {
-    'ForumName' => 'Forum Test',
-    'Subject' => 'Subject Test'
+    'ForumName' => 'Forum1',
+    'Subject' => 'Subject2'
   }
 )
 
@@ -177,3 +177,34 @@ resp = client.batch_write_item(
     ]
   }
 )
+
+# update_item to do an atomic increment
+# example table to test - Thread with an attribute named 'Foo'
+resp = client.update_item({
+  table_name: 'Thread',
+  key: {
+    'ForumName' => 'Forum2',
+    'Subject' => 'Subject2'
+  },
+  expression_attribute_values: {
+    ':i' => 1,
+  },
+  update_expression: 'SET Foo = Foo + :i',
+  return_values: 'UPDATED_NEW',
+})
+
+
+def increment_foo(client)
+  client.update_item({
+    table_name: 'Thread',
+    key: {
+     'ForumName' => 'Forum2',
+     'Subject' => 'Subject2'
+    },
+    expression_attribute_values: {
+     ':i' => 1,
+    },
+    update_expression: 'SET Foo = Foo + :i',
+    return_values: 'UPDATED_NEW',
+    })
+end
