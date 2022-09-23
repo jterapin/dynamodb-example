@@ -199,19 +199,42 @@ resp = client.update_item({
 # and the amount to increment by (can default to 1).
 
 # function specific to 'Thread'
-def increment_foo(client:, forum_name:, subject_name:, attribute_name:, increment: 1)
+
+
+# thinking of doing the following arg names
+# partition_key and partition_key_value
+# sort_key and sort_key_value
+# table_name
+
+# conditional statement to handle tables with secondary keys
+# if sort_key exists - do this.
+# maybe a helper function that handles generating the hash for key?
+
+def increment_foo(client:, table_name:, item_keys:, expression_attribute_value:, increment: 1)
   client.update_item({
-    table_name: 'Thread',
-    key: {
-     'ForumName' => forum_name,
-     'Subject' => subject_name
-    },
+    table_name: table_name,
+    key: item_keys,
     expression_attribute_values: {
-     ':i' => increment,
+      ':i' => increment,
     },
-    update_expression: "SET #{attribute_name} = #{attribute_name} + :i",
+  expression_attribute_names: {
+    '#e' => expression_attribute_value,
+    },
+    update_expression: "SET #e = #e + :i",
     return_values: 'UPDATED_NEW',
     })
 end
 
-increment_foo(client: client, forum_name: 'Forum1', subject_name: 'Subject1', attribute_name: 'Foo', increment: 2)
+# code to test when there's partition and sort keys
+input_keys = {
+  'ForumName' => 'Forum1',
+  'Subject' => 'Subject1'
+}
+increment_foo(client: client, table_name: 'Thread',item_keys: input_keys, expression_attribute_value: 'Foo', increment: 2)
+
+# code to test when there's only one primary key
+input_key = {
+  'Name' => 'Name1',
+}
+increment_foo(client: client, table_name: 'Forum',item_keys: input_key, expression_attribute_value: 'Foo')
+
